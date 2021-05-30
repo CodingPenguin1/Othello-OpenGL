@@ -1,3 +1,4 @@
+#include "Board.h"
 #include <GL/glut.h>
 #include <chrono>
 #include <iostream>
@@ -10,14 +11,12 @@
 #define BOARD_SIZE 8
 
 
-// Grid setup
-int points[BOARD_SIZE][BOARD_SIZE];
+// Board setup
+Board *board;
 
 
 // Misc variables
 double start_time;
-bool *key_states = new bool[256];
-bool *special_key_states = new bool[256];
 const int framerate_average_count = 5;
 double *frame_times = new double[framerate_average_count];
 
@@ -47,7 +46,7 @@ void draw_board() {
     glLineWidth(3);
     glColor3f(0.0, 0.0, 0.0);
     glBegin(GL_LINES);
-    for (float x = -1.0 + (2.0 / BOARD_SIZE); x < 1.0; x += 2.0 / (BOARD_SIZE)) {
+    for (float x = -1.0 + (2.0 / BOARD_SIZE); x < 1.0; x += 2.0 / BOARD_SIZE) {
         // Horizontal lines
         glVertex2f(-1.0, x);
         glVertex2f(1.0, x);
@@ -59,14 +58,16 @@ void draw_board() {
 }
 
 
+void draw_pieces() {
+}
+
+
 void display() {
-    // Setup
     double frame_start_time = time();
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
 
     // Draw board background
     draw_board();
+    draw_pieces();
 
     // Calculate framerate
     for (int i = 1; i < framerate_average_count; ++i)
@@ -74,13 +75,14 @@ void display() {
     frame_times[4] = time() - frame_start_time;
     double framerate = framerate_average_count / (frame_times[0] + frame_times[1] + frame_times[2] + frame_times[3] + frame_times[4]);
 
-    // Render settings text
+    // Render framerate
     glPushMatrix();
     glLoadIdentity();
     glColor3f(1.0, 1.0, 1.0);
     draw_string(-0.99, 0.97, std::to_string((int)framerate) + " FPS");
     glPopMatrix();
 
+    // Render
     glFlush();
     glutSwapBuffers();
 }
@@ -103,6 +105,10 @@ void init(int argc, char **argv) {
     // Initialize framerate average array
     for (int i = 0; i < framerate_average_count; ++i)
         frame_times[i] = 0.0;
+
+    // Create board
+    board = new Board(BOARD_SIZE);
+    board->print();
 }
 
 
