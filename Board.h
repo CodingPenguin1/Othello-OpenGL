@@ -6,6 +6,6 @@ class Board {
 
     Board(int);
     ~Board();
-    int &operator[](int i);
+    int *&operator[](int i);
     void print();
 };
