@@ -1,5 +1,5 @@
 
-OBJECTS=main.o Board.o
+OBJECTS=main.o Node.o
 
 CXXFLAGS=-g -m64 -Wno-deprecated -I/usr/X11R6/include -I/usr/local/include -std=c++11 -ggdb -Wall -Wextra -Wpedantic
 
