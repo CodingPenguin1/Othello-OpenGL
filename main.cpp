@@ -5,39 +5,24 @@
 
 // int main(int argc, char **argv) {
 int main() {
-    uint16_t *initial_board = new uint16_t[8];
+    uint16_t initial_board[8];
     initial_board[3] = 0x0240;  // 1 is black and 2 is white
     initial_board[4] = 0x0180;
 
-    // print_board(initial_board);
+    Node *root = new Node(Board(initial_board));
+    uint8_t tree_depth = 8;
+    root->generate_subtree(tree_depth);
+    printf("done generating tree (depth %d)\n", tree_depth);
 
-    Node *root = new Node(initial_board);
-    root->create_next_states(1);
-    printf("%d children\n", root->n_children);
-    printf("Original\n");
-    root->print_board();
+    uint64_t tree_size = root->get_tree_size();
+    printf("%lu B\n", tree_size);
+    printf("%f KB\n", tree_size / 1024.0);
+    printf("%f MB\n", tree_size / (1024.0 * 1024.0));
+    printf("%f GB\n", tree_size / (1024.0 * 1024.0 * 1024.0));
 
-    for (int i = 0; i < root->n_children; i++) {
-        printf("\nChild %d\n", i);
-        root->children[i]->print_board();
-    }
+    // root->print_tree(5);
 
-    printf("\n\n\n--------\n\n\n");
-
-    for (int i = 0; i < root->n_children; i++) {
-        Node *sub_root = root->children[i];
-
-        sub_root->create_next_states(2);
-        printf("\n\n%d children\n", sub_root->n_children);
-        printf("Original\n");
-        sub_root->print_board();
-
-        for (int i = 0; i < sub_root->n_children; i++) {
-            printf("\nChild %d\n", i);
-            sub_root->children[i]->print_board();
-        }
-    }
-
+    delete root;
 
     return 0;
 }

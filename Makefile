@@ -12,9 +12,9 @@ clean:
 	rm main
 
 main: $(OBJECTS)
-	g++ -o main $(OBJECTS) $(LIBS)
+	g++ -o main $(OBJECTS) $(LIBS) -fopenmp
 
 .SUFFIXES: .cpp
 
-%.o : %.ccp
-	g++ -c $(CXXFLAGS) -o $@ $<
+%.o : %.cpp
+	g++ -c $(CXXFLAGS) -o $@ $< -fopenmp

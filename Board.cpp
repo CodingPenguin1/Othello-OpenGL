@@ -1,7 +1,4 @@
 #include "Board.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 
 Board::Board() {
@@ -15,6 +12,7 @@ Board::Board(uint16_t *board_data) {
     memcpy(this->board, board_data, sizeof(uint16_t) * 8);
     this->score = 0;
 }
+
 
 Board::~Board() {
 }
@@ -45,11 +43,19 @@ void Board::print_board() {
 
 
 bool Board::check_valid_move(uint8_t row, uint8_t col, uint8_t player) {
-    uint8_t **unpacked_board = this->get_unpacked_board();
+    uint8_t **unpacked_board = new uint8_t *[8];
+    for (int i = 0; i < 8; ++i)
+        unpacked_board[i] = new uint8_t[8];
+    this->get_unpacked_board(unpacked_board);
 
     // If space is not empty
-    if (unpacked_board[row][col] != 0)
+    if (unpacked_board[row][col] != 0) {
+        // Delete the unpacked board
+        for (int i = 0; i < 8; ++i)
+            delete[] unpacked_board[i];
+        delete[] unpacked_board;
         return false;
+    }
 
     // Iterate through each direction
     for (int d_row = -1; d_row < 2; ++d_row) {
@@ -79,8 +85,13 @@ bool Board::check_valid_move(uint8_t row, uint8_t col, uint8_t player) {
                     if (unpacked_board[cur_row][cur_col] == 0)
                         break;
 
-                    if (found_enemy && found_self)
+                    if (found_enemy && found_self) {
+                        // Delete the unpacked board
+                        for (int i = 0; i < 8; ++i)
+                            delete[] unpacked_board[i];
+                        delete[] unpacked_board;
                         return true;
+                    }
 
                     cur_row += d_row;
                     cur_col += d_col;
@@ -88,12 +99,21 @@ bool Board::check_valid_move(uint8_t row, uint8_t col, uint8_t player) {
             }
         }
     }
+
+    // Delete the unpacked board
+    for (int i = 0; i < 8; ++i)
+        delete[] unpacked_board[i];
+    delete[] unpacked_board;
+
     return false;
 }
 
 
-bool Board::apply_move(uint8_t row, uint8_t col, uint8_t player) {
-    uint8_t **unpacked_board = this->get_unpacked_board();
+void Board::apply_move(uint8_t row, uint8_t col, uint8_t player) {
+    uint8_t **unpacked_board = new uint8_t *[8];
+    for (int i = 0; i < 8; ++i)
+        unpacked_board[i] = new uint8_t[8];
+    this->get_unpacked_board(unpacked_board);
 
     // Iterate through each direction
     for (int d_row = -1; d_row < 2; ++d_row) {
@@ -154,15 +174,40 @@ bool Board::apply_move(uint8_t row, uint8_t col, uint8_t player) {
             this->board[row] |= (unpacked_board[row][col] << 2 * (8 - col - 1));
         }
     }
+
+    // Delete the unpacked board
+    for (int i = 0; i < 8; ++i)
+        delete[] unpacked_board[i];
+    delete[] unpacked_board;
 }
 
 
-uint8_t **Board::get_unpacked_board() {
-    uint8_t **unpacked_board = new uint8_t *[8];
-    for (int row = 0; row < 8; ++row) {
-        unpacked_board[row] = new uint8_t[8];
+void Board::get_unpacked_board(uint8_t **unpacked_board) {
+    for (int row = 0; row < 8; ++row)
         for (uint8_t col = 0; col < 8; ++col)
             unpacked_board[row][col] = (this->board[row] >> 2 * (8 - col - 1)) & 0x3;
-    }
-    return unpacked_board;
+}
+
+
+uint8_t Board::get_current_player() {
+    uint8_t **unpacked_board = new uint8_t *[8];
+    for (int i = 0; i < 8; ++i)
+        unpacked_board[i] = new uint8_t[8];
+    this->get_unpacked_board(unpacked_board);
+
+    uint8_t num_pieces = 0;
+    for (int row = 0; row < 8; ++row)
+        for (int col = 0; col < 8; ++col)
+            if (unpacked_board[row][col] > 0)
+                ++num_pieces;
+
+    // Delete the unpacked board
+    for (int i = 0; i < 8; ++i)
+        delete[] unpacked_board[i];
+    delete[] unpacked_board;
+
+    // If an even amount of pieces, player 1
+    if (num_pieces % 2 == 0)
+        return 1;
+    return 2;
 }
