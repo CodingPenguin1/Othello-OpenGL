@@ -17,4 +17,5 @@ class Node {
     uint8_t **get_valid_moves();
     uint8_t **get_unpacked_board();
     bool check_valid_move(uint8_t, uint8_t, uint8_t);
+    bool apply_move(uint8_t, uint8_t, uint8_t);
 };

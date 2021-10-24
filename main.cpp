@@ -12,14 +12,6 @@ int main() {
     // print_board(initial_board);
 
     Node *root = new Node(initial_board);
-    // root->create_next_states(1);
-    // printf("%d\n", root->n_children);
-    // root->print_board();
-    // for (int i = 0; i < root->n_children; i++) {
-    //     printf("\n");
-    //     root->children[i]->print_board();
-    // }
-
     root->create_next_states(1);
     printf("%d children\n", root->n_children);
     printf("Original\n");

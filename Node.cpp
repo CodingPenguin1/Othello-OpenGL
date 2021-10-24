@@ -58,7 +58,7 @@ void Node::create_next_states(uint8_t player) {
             if (this->check_valid_move(row, col, player)) {
                 // Create a new child with the move applied
                 Node *child = new Node(this->board);
-                child->board[row] += (player << (2 * (8 - col - 1)));
+                child->apply_move(row, col, player);
                 this->add_child(child);
             }
         }
@@ -111,6 +111,81 @@ bool Node::check_valid_move(uint8_t row, uint8_t col, uint8_t player) {
         }
     }
     return false;
+}
+
+
+bool Node::apply_move(uint8_t row, uint8_t col, uint8_t player) {
+    uint8_t **unpacked_board = this->get_unpacked_board();
+
+    // Iterate through each direction
+    for (int d_row = -1; d_row < 2; ++d_row) {
+        for (int d_col = -1; d_col < 2; ++d_col) {
+            int cur_row = row;
+            int cur_col = col;
+            bool valid_direction = false;
+            // If direction is not 0,0
+            if (d_row != 0 || d_col != 0) {
+                // Iterate in that direction
+                cur_row += d_row;
+                cur_col += d_col;
+
+                bool found_enemy = false;
+                bool found_self = false;
+
+                while (cur_row > -1 && cur_row < 8 && cur_col > -1 && cur_col < 8) {
+                    if (unpacked_board[cur_row][cur_col] == player)
+                        found_self = true;
+                    if (unpacked_board[cur_row][cur_col] > 0 && unpacked_board[cur_row][cur_col] != player)
+                        found_enemy = true;
+
+                    // If found self before enemy, not valid move
+                    if (found_self && !found_enemy)
+                        break;
+
+                    // If gap found, not valid move
+                    if (unpacked_board[cur_row][cur_col] == 0)
+                        break;
+
+                    if (found_enemy && found_self) {
+                        valid_direction = true;
+                        break;
+                    }
+
+                    cur_row += d_row;
+                    cur_col += d_col;
+                }
+            }
+
+            if (valid_direction) {
+                cur_row = row;
+                cur_col = col;
+
+                while (cur_row > -1 && cur_row < 8 && cur_col > -1 && cur_col < 8 && unpacked_board[cur_row][cur_col] != player) {
+                    unpacked_board[cur_row][cur_col] = player;
+                    cur_row += d_row;
+                    cur_col += d_col;
+                }
+            }
+        }
+    }
+
+    // Print unpacked board
+    for (uint8_t row = 0; row < 8; ++row) {
+        for (uint8_t col = 0; col < 8; ++col) {
+            printf("%d", unpacked_board[row][col]);
+        }
+        printf("\n");
+    }
+    printf("\n\n");
+
+
+    // Repack board
+    for (int row = 0; row < 8; ++row) {
+        this->board[row] = 0x0000;
+        for (int col = 0; col < 8; ++col) {
+            this->board[row] |= (unpacked_board[row][col] << 2 * (8 - col - 1));
+        }
+    }
 }
 
 
