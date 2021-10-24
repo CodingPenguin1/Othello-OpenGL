@@ -169,16 +169,6 @@ bool Node::apply_move(uint8_t row, uint8_t col, uint8_t player) {
         }
     }
 
-    // Print unpacked board
-    for (uint8_t row = 0; row < 8; ++row) {
-        for (uint8_t col = 0; col < 8; ++col) {
-            printf("%d", unpacked_board[row][col]);
-        }
-        printf("\n");
-    }
-    printf("\n\n");
-
-
     // Repack board
     for (int row = 0; row < 8; ++row) {
         this->board[row] = 0x0000;
