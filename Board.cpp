@@ -10,7 +10,7 @@ Board::Board() {
 
 Board::Board(uint16_t *board_data) {
     memcpy(this->board, board_data, sizeof(uint16_t) * 8);
-    this->score = 0;
+    this->score = get_score();
 }
 
 
@@ -21,7 +21,8 @@ Board::~Board() {
 void Board::print_board() {
     for (uint8_t row = 0; row < 8; ++row) {
         for (uint8_t col = 0; col < 8; ++col) {
-            uint16_t current_space = (this->board[row] >> 2 * (8 - col - 1)) & 0x3;  // Shift to the right so that current cell is right most, 0 padded on left
+            // Shift to the right so that current cell is right most, 0 padded on left
+            uint16_t current_space = (this->board[row] >> 2 * (8 - col - 1)) & 0x3;
             switch (current_space) {
                 case 0:  // Empty
                     printf(".");
@@ -39,6 +40,22 @@ void Board::print_board() {
         }
         printf("\n");
     }
+}
+
+
+uint8_t Board::get_score() {
+    uint8_t score = 0;
+    for (uint8_t row = 0; row < 8; ++row) {
+        for (uint8_t col = 0; col < 8; ++col) {
+            // + 1 to score if black has a move
+            if (check_valid_move(row, col, 1))
+                score += 1;
+            // - 1 to score if white has a move
+            else if (check_valid_move(row, col, 2))
+                score -= 1;
+        }
+    }
+    return score;
 }
 
 
@@ -179,6 +196,9 @@ void Board::apply_move(uint8_t row, uint8_t col, uint8_t player) {
     for (int i = 0; i < 8; ++i)
         delete[] unpacked_board[i];
     delete[] unpacked_board;
+
+    // Update the score
+    this->score = this->get_score();
 }
 
 

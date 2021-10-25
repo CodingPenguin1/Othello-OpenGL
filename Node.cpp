@@ -17,11 +17,6 @@ Node::~Node() {
 }
 
 
-void Node::print_board() {
-    board.print_board();
-}
-
-
 void Node::generate_subtree(uint8_t depth) {
     generate_subtree_helper(depth, 0, this);
 }
@@ -81,13 +76,20 @@ void Node::print_tree(uint8_t depth) {
 void Node::print_tree_helper(uint8_t depth, uint8_t current_depth, Node *node) {
     if (current_depth < depth && node->n_children > 0) {
         // Print node's board
-        printf("\n\n\n--------\n\n\nDepth %d\n%d Children\nOriginal\n", current_depth, node->n_children);
-        node->print_board();
+        printf("\n\n\n--------\n\n\nDepth %d\n%d Children\n", current_depth, node->n_children);
+        if (board.score > 0)
+            printf("Score: %d (black)\n", board.score);
+        else if (board.score < 0)
+            printf("Score: %d (white)\n", -board.score);
+        else
+            printf("Score: 0\n");
+        printf("Original\n");
+        board.print_board();
 
         // Print children
         for (int i = 0; i < node->n_children; i++) {
             printf("\nChild %d\n", i);
-            node->children[i]->print_board();
+            node->children[i]->board.print_board();
         }
 
         // Recurse on children

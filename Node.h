@@ -19,7 +19,6 @@ class Node {
 
     Node(Board);
     ~Node();
-    void print_board();
     void add_child(Node *);
     void create_next_states(uint8_t);
     void generate_subtree(uint8_t);

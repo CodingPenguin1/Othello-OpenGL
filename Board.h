@@ -17,4 +17,5 @@ class Board {
     bool check_valid_move(uint8_t, uint8_t, uint8_t);
     void apply_move(uint8_t, uint8_t, uint8_t);
     uint8_t get_current_player();
+    uint8_t get_score();
 };
