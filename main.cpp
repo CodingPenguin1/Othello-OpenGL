@@ -12,7 +12,7 @@ int main() {
     initial_board[4] = 0x0180;
 
     Node *root = new Node(Board(initial_board));
-    uint8_t tree_depth = 1;
+    uint8_t tree_depth = 3;
     root->generate_subtree(tree_depth);
     printf("done generating tree (depth %d)\n", tree_depth);
 

@@ -6,16 +6,16 @@
 
 class Node {
   private:
-    void generate_subtree_helper(uint8_t, uint8_t, Node *);
-    void print_tree_helper(uint8_t, uint8_t, Node *);
-    uint64_t get_tree_size_helper(uint64_t, Node *);
+    int8_t generate_subtree_helper(uint8_t, uint8_t);
+    void print_tree_helper(uint8_t, uint8_t);
+    uint64_t get_tree_size_helper(uint64_t);
 
 
   public:
     Board board;
     uint8_t n_children;
     Node **children;
-    float branch_score;
+    int8_t branch_score;
 
     Node(Board);
     ~Node();

@@ -2,9 +2,9 @@
 
 
 Board::Board() {
-    for (int row = 0; row < 8; ++row) {
+    for (int row = 0; row < 8; ++row)
         this->board[row] = 0x0000;
-    }
+    this->score = get_score();
 }
 
 
@@ -43,19 +43,37 @@ void Board::print_board() {
 }
 
 
-uint8_t Board::get_score() {
-    uint8_t score = 0;
+void Board::print_detailed_board() {
+    // Prints board with metadata
+    if (score > 0)
+        printf("Score: %d (black)\n", score);
+    else if (score < 0)
+        printf("Score: %d (white)\n", score);
+    else
+        printf("Score: 0\n");
+
+    uint8_t player = get_current_player();
+    if (player == 1)
+        printf("Turn: X\n");
+    else
+        printf("Turn: O\n");
+    print_board();
+}
+
+
+int8_t Board::get_score() {
+    int8_t _score = 0;
     for (uint8_t row = 0; row < 8; ++row) {
         for (uint8_t col = 0; col < 8; ++col) {
             // + 1 to score if black has a move
             if (check_valid_move(row, col, 1))
-                score += 1;
+                _score += 1;
             // - 1 to score if white has a move
             else if (check_valid_move(row, col, 2))
-                score -= 1;
+                _score -= 1;
         }
     }
-    return score;
+    return _score;
 }
 
 
@@ -138,6 +156,7 @@ void Board::apply_move(uint8_t row, uint8_t col, uint8_t player) {
             int cur_row = row;
             int cur_col = col;
             bool valid_direction = false;
+
             // If direction is not 0,0
             if (d_row != 0 || d_col != 0) {
                 // Iterate in that direction
@@ -174,6 +193,10 @@ void Board::apply_move(uint8_t row, uint8_t col, uint8_t player) {
             if (valid_direction) {
                 cur_row = row;
                 cur_col = col;
+                unpacked_board[cur_row][cur_col] = player;
+
+                cur_row += d_row;
+                cur_col += d_col;
 
                 while (cur_row > -1 && cur_row < 8 && cur_col > -1 && cur_col < 8 && unpacked_board[cur_row][cur_col] != player) {
                     unpacked_board[cur_row][cur_col] = player;

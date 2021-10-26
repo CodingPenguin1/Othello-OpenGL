@@ -13,9 +13,10 @@ class Board {
     Board(uint16_t *);
     ~Board();
     void print_board();
+    void print_detailed_board();
     void get_unpacked_board(uint8_t **);
     bool check_valid_move(uint8_t, uint8_t, uint8_t);
     void apply_move(uint8_t, uint8_t, uint8_t);
+    int8_t get_score();
     uint8_t get_current_player();
-    uint8_t get_score();
 };
