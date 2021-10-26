@@ -12,17 +12,18 @@ int main() {
     initial_board[4] = 0x0180;
 
     Node *root = new Node(Board(initial_board));
-    uint8_t tree_depth = 3;
+    uint8_t tree_depth = 8;
     root->generate_subtree(tree_depth);
     printf("done generating tree (depth %d)\n", tree_depth);
 
     uint64_t tree_size = root->get_tree_size();
+    printf("Root: %lu B\n", sizeof(*root));
     printf("%lu B\n", tree_size);
     printf("%f KB\n", tree_size / 1024.0);
     printf("%f MB\n", tree_size / (1024.0 * 1024.0));
     printf("%f GB\n", tree_size / (1024.0 * 1024.0 * 1024.0));
 
-    root->print_tree(1);
+    // root->print_tree(1);
 
     delete root;
 

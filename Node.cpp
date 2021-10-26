@@ -54,15 +54,15 @@ int8_t Node::generate_subtree_helper(uint8_t depth, uint8_t current_depth) {
 
 
 void Node::create_next_states(uint8_t player) {
-    // Check all spaces for potential moves
-    // #pragma omp parallel for
+// Check all spaces for potential moves
+#pragma omp parallel for
     for (uint8_t row = 0; row < 8; ++row) {
         for (uint8_t col = 0; col < 8; ++col) {
             if (board.check_valid_move(row, col, player)) {
                 // Create a new child with the move applied
                 Node *child = new Node(board);
                 child->board.apply_move(row, col, player);
-                // #pragma omp critical
+#pragma omp critical
                 {
                     this->add_child(child);
                 }
@@ -118,7 +118,7 @@ uint64_t Node::get_tree_size() {
 
 
 uint64_t Node::get_tree_size_helper(uint64_t current_size) {
-    current_size += sizeof(this);
+    current_size += sizeof(*this);
     for (int i = 0; i < this->n_children; i++)
         current_size += this->children[i]->get_tree_size_helper(0);
     return current_size;
